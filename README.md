@@ -114,7 +114,7 @@ Comprehensive testing with 27 test cases covering:
 
 ### Running Tests
 
-```bash
+
 # Without Docker
 npm install
 npm test
@@ -122,7 +122,7 @@ npm test
 # With Docker
 docker-compose up -d
 docker-compose exec app npm test
-```
+
 
 ## Setup Instructions
 
@@ -134,95 +134,95 @@ docker-compose exec app npm test
 ### Installation (Local)
 
 1. Clone the repository:
-```bash
-git clone https://github.com/Naveena-kemburu/dex-amm-protocol.git
+
+git clone https://github.com/N-Harirha16/dex-Amm-protocol.git
 cd dex-amm-protocol
-```
+
 
 2. Install dependencies:
-```bash
+
 npm install
-```
+
 
 3. Compile contracts:
-```bash
+
 npm run compile
-```
+
 
 4. Run tests:
-```bash
+
 npm test
-```
+
 
 5. Check coverage:
-```bash
+
 npm run coverage
-```
+
 
 6. Deploy contracts:
-```bash
+
 npm run deploy
-```
+
 
 ### Docker Setup
 
 1. Build and start containers:
-```bash
+
 docker-compose up -d
-```
+
 
 2. Run tests in container:
-```bash
+
 docker-compose exec app npm test
-```
+
 
 3. View coverage:
-```bash
+
 docker-compose exec app npm run coverage
-```
+
 
 4. Stop containers:
-```bash
+
 docker-compose down
-```
+
 
 ## Implementation Details
 
 ### Mathematical Formulas
 
 #### LP Token Minting (First Provider)
-```
+
 liquidityMinted = sqrt(amountA * amountB)
-```
+
 
 #### Subsequent Liquidity Additions
-```
+
 liquidityA = (amountA * totalLiquidity) / reserveA
 liquidityB = (amountB * totalLiquidity) / reserveB
 liquidityMinted = min(liquidityA, liquidityB)  // Take minimum for balanced pool
-```
+
 
 #### Liquidity Removal
-```
+
 amountA = (liquidityBurned * reserveA) / totalLiquidity
 amountB = (liquidityBurned * reserveB) / totalLiquidity
-```
+
 
 #### Swap Output Calculation (with 0.3% fee)
-```
+
 amountInWithFee = amountIn * 997  // 99.7% of input (0.3% fee deducted)
 numerator = amountInWithFee * reserveOut
 denominator = (reserveIn * 1000) + amountInWithFee
 amountOut = numerator / denominator
-```
+
 
 ### Constant Product Formula Verification
-```
+
 Before Swap: k = reserveA * reserveB
 After Swap: k' = reserveA' * reserveB'
 
 The fee mechanism ensures: k' >= k (k increases due to fee accumulation)
-```
+
 
 ## Project Structure
 
@@ -308,5 +308,5 @@ dex-amm-protocol/
 
 ## Repository
 
-🔗 [GitHub Repository](https://github.com/Naveena-kemburu/dex-amm-protocol)
+🔗 [GitHub Repository](https://github.com/N-Haritha16/dex-Amm-protocol)
 
