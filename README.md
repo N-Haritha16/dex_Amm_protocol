@@ -135,7 +135,7 @@ docker-compose exec app npm test
 
 1. Clone the repository:
 
-git clone https://github.com/N-Harirha16/dex-Amm-protocol.git
+git clone https://github.com/N-Haritha16/dex-Amm-protocol.git
 cd dex-amm-protocol
 
 
