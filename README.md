@@ -1,14 +1,15 @@
 # dex-amm-protocol
 
-A simplified Decentralized Exchange using Automated Market Maker (AMM) protocol with constant product formula (x*y=k)
+A simplified Decentralized Exchange using Automated Market Maker (AMM) protocol with constant product formula \(x * y = k\).
 
 ## Project Overview
 
-This project implements a fully functional Decentralized Exchange (DEX) using the Automated Market Maker (AMM) model, similar to Uniswap V2. The implementation demonstrates how modern DeFi protocols enable decentralized trading without centralized intermediaries.
+This project implements a fully functional Decentralized Exchange (DEX) using the Automated Market Maker (AMM) model, similar to Uniswap V2. It demonstrates how DeFi protocols enable decentralized trading without centralized intermediaries.
 
 ## Task Description
 
-The objective was to build a simplified DEX that allows users to:
+The objective is to build a simplified DEX that allows users to:
+
 - Add liquidity to trading pairs and receive LP (Liquidity Provider) tokens
 - Remove liquidity by burning LP tokens
 - Swap between two ERC-20 tokens using the constant product formula
@@ -16,37 +17,43 @@ The objective was to build a simplified DEX that allows users to:
 
 ## Key Features
 
-### 1. **Liquidity Pool Management**
+### 1. Liquidity Pool Management
+
 - Add initial and subsequent liquidity to the pool
 - Proportional LP token minting using the square root formula for initial liquidity
 - LP token distribution based on share of the pool
 - Remove liquidity and withdraw tokens with accrued fees
 
-### 2. **Constant Product Formula (AMM)**
-- Implements the formula: `x * y = k`
-- Where x and y are token reserves and k remains constant (ignoring fees)
-- Automatic price discovery based on reserve ratios
-- Ensures no arbitrage opportunities in the pool
+### 2. Constant Product Formula (AMM)
 
-### 3. **Trading Mechanism**
+- Implements the formula: `x * y = k`
+- Where `x` and `y` are token reserves and `k` remains constant (ignoring fees)
+- Automatic price discovery based on reserve ratios
+- Fee mechanism ensures \(k'\) is greater than or equal to \(k\) after swaps
+
+### 3. Trading Mechanism
+
 - Swap TokenA for TokenB: `swapAForB()`
 - Swap TokenB for TokenA: `swapBForA()`
 - 0.3% trading fee mechanism:
-  - Formula: `amountInWithFee = amountIn * 997`
-  - Output: `amountOut = (amountInWithFee * reserveOut) / ((reserveIn * 1000) + amountInWithFee)`
+  - `amountInWithFee = amountIn * 997`
+  - `amountOut = (amountInWithFee * reserveOut) / ((reserveIn * 1000) + amountInWithFee)`
   - Fees remain in the pool, benefiting liquidity providers
 
-### 4. **Price Discovery**
-- Current price: `Price = reserveB / reserveA`
+### 4. Price Discovery
+
+- Current price: `price = reserveB / reserveA`
 - Price updates dynamically after each trade
-- `getPrice()` and `getReserves()` functions for querying pool state
+- `getPrice()` and `getReserves()` functions expose pool state
 
 ## Architecture
 
 ### Smart Contracts
 
-#### **contracts/DEX.sol**
+#### `contracts/DEX.sol`
+
 Main DEX contract implementing:
+
 - State management for token reserves and LP ownership
 - Liquidity management functions
 - Swap functionality with fee calculations
@@ -54,26 +61,31 @@ Main DEX contract implementing:
 - Square root calculation for LP token minting
 
 **Key Functions:**
-- `addLiquidity(uint256 amountA, uint256 amountB)` - Add liquidity to pool
-- `removeLiquidity(uint256 liquidityAmount)` - Remove liquidity and burn LP tokens
-- `swapAForB(uint256 amountAIn)` - Swap token A for token B
-- `swapBForA(uint256 amountBIn)` - Swap token B for token A
-- `getPrice()` - Get current exchange rate
-- `getReserves()` - Get current pool reserves
-- `getAmountOut()` - Calculate output amount with fees
 
-#### **contracts/MockERC20.sol**
+- `addLiquidity(uint256 amountA, uint256 amountB)` – Add liquidity to the pool
+- `removeLiquidity(uint256 liquidityAmount)` – Remove liquidity and burn LP tokens
+- `swapAForB(uint256 amountAIn)` – Swap token A for token B
+- `swapBForA(uint256 amountBIn)` – Swap token B for token A
+- `getPrice()` – Get current exchange rate
+- `getReserves()` – Get current pool reserves
+- `getAmountOut()` – Calculate output amount with fees
+
+#### `contracts/MockERC20.sol`
+
 ERC-20 token contract for testing:
-- Inherits from OpenZeppelin's ERC20
+
+- Inherits from OpenZeppelin’s ERC20
 - Mints 1 million tokens to deployer on creation
 - Includes mint function for test token distribution
 
 ## Testing
 
-### Test Suite: **test/DEX.test.js**
-Comprehensive testing with 27 test cases covering:
+### Test Suite: `test/DEX.test.js`
 
-#### Liquidity Management Tests (8 tests)
+Comprehensive testing with **27** test cases covering:
+
+#### Liquidity Management Tests (8)
+
 - Initial liquidity provision
 - Correct LP token minting for first provider
 - Subsequent liquidity additions
@@ -83,7 +95,8 @@ Comprehensive testing with 27 test cases covering:
 - Error handling for zero amounts
 - Prevention of over-withdrawal
 
-#### Token Swap Tests (8 tests)
+#### Token Swap Tests (8)
+
 - Token A to Token B swaps
 - Token B to Token A swaps
 - Correct output calculation with 0.3% fee
@@ -93,220 +106,246 @@ Comprehensive testing with 27 test cases covering:
 - Large swaps with high price impact
 - Multiple consecutive swaps
 
-#### Price Calculation Tests (3 tests)
+#### Price Calculation Tests (3)
+
 - Initial price verification
 - Price updates after swaps
 - Error handling for zero reserves
 
-#### Fee Distribution Tests (2 tests)
-- Fee accumulation for liquidity providers
-- Proportional fee distribution based on LP share
+#### Fee Distribution Tests (2)
 
-#### Edge Cases Tests (3 tests)
+- Fee accumulation for liquidity providers
+- Fee distribution to LPs based on pool share (overall value does not decrease)
+
+#### Edge Case Tests (3)
+
 - Very small liquidity amounts
 - Very large liquidity amounts
 - Unauthorized access prevention
 
-#### Event Tests (3 tests)
-- LiquidityAdded event emission
-- LiquidityRemoved event emission
-- Swap event emission
+#### Event Tests (3)
 
-### Running Tests
+- `LiquidityAdded` event emission
+- `LiquidityRemoved` event emission
+- `Swap` event emission
 
+## Running Tests
 
-# Without Docker
+### Without Docker
+
+```bash
 npm install
-npm test
-
-# With Docker
-docker-compose up -d
-docker-compose exec app npm test
-
-
-## Setup Instructions
-
-### Prerequisites
-- Node.js v18+
-- Docker & Docker Compose (optional)
-- Git
-
-### Installation (Local)
-
-1. Clone the repository:
-
-git clone https://github.com/N-Haritha16/dex_Amm_protocol
-cd dex-amm-protocol
-
-
-2. Install dependencies:
-
-npm install
-
-
-3. Compile contracts:
-
 npm run compile
-
-
-4. Run tests:
-
 npm test
-
-
-5. Check coverage:
-
 npm run coverage
-
-
-6. Deploy contracts:
-
 npm run deploy
 
-
-### Docker Setup
-
-1. Build and start containers:
-
-docker-compose up -d
-
-
-2. Run tests in container:
-
+With Docker
+bash
+docker-compose up --build -d
 docker-compose exec app npm test
-
-
-3. View coverage:
-
 docker-compose exec app npm run coverage
-
-
-4. Stop containers:
-
+docker-compose exec app npm run deploy
 docker-compose down
+Setup Instructions
+Prerequisites
+Node.js v18+ (tested with v20 and v24)
 
+Docker & Docker Compose (optional)
+
+Git
+
+## Installation (Local)
+Clone the repository:
+
+bash
+git clone https://github.com/N-Haritha16/dex_Amm_protocol
+cd dex_Amm_protocol
+Install dependencies:
+
+bash
+npm install
+Compile contracts:
+
+bash
+npm run compile
+Run tests:
+
+bash
+npm test
+Check coverage:
+
+bash
+npm run coverage
+# Example result:
+# Statements: 97.5%, Branches: 66.67%, Functions: 90.91%, Lines: 98.44%
+Deploy contracts (Hardhat local network):
+
+bash
+npm run deploy
+# Example output:
+# Deploying DEX AMM...
+# Token A deployed to: 0x...
+# Token B deployed to: 0x...
+# DEX deployed to:     0x...
+Docker Setup
+Build and start containers:
+
+bash
+docker-compose up --build -d
+Run tests in container:
+
+bash
+docker-compose exec app npm test
+View coverage:
+
+bash
+docker-compose exec app npm run coverage
+Deploy from container:
+
+bash
+docker-compose exec app npm run deploy
+Stop containers:
+
+bash
+docker-compose down
+Note: Recent Docker Compose versions ignore the version field in docker-compose.yml; it is safe to remove it to avoid warnings.
 
 ## Implementation Details
-
-### Mathematical Formulas
-
-#### LP Token Minting (First Provider)
-
+Mathematical Formulas
+LP Token Minting (First Provider)
+text
 liquidityMinted = sqrt(amountA * amountB)
-
-
-#### Subsequent Liquidity Additions
-
-liquidityA = (amountA * totalLiquidity) / reserveA
-liquidityB = (amountB * totalLiquidity) / reserveB
-liquidityMinted = min(liquidityA, liquidityB)  // Take minimum for balanced pool
-
-
-#### Liquidity Removal
-
+Subsequent Liquidity Additions
+text
+liquidityA      = (amountA * totalLiquidity) / reserveA
+liquidityB      = (amountB * totalLiquidity) / reserveB
+liquidityMinted = min(liquidityA, liquidityB)  // balanced pool
+Liquidity Removal
+text
 amountA = (liquidityBurned * reserveA) / totalLiquidity
 amountB = (liquidityBurned * reserveB) / totalLiquidity
+Swap Output Calculation (0.3% Fee)
+text
+amountInWithFee = amountIn * 997     // 99.7% of input (0.3% fee)
+numerator       = amountInWithFee * reserveOut
+denominator     = (reserveIn * 1000) + amountInWithFee
+amountOut       = numerator / denominator
+Constant Product Formula Verification
+text
+Before swap: k  = reserveA * reserveB
+After swap:  k' = reserveA' * reserveB'
+The fee mechanism ensures 
+k
+′
+≥
+k
+k 
+′
+ ≥k, since fees stay in the pool and are distributed indirectly to LPs.
 
-
-#### Swap Output Calculation (with 0.3% fee)
-
-amountInWithFee = amountIn * 997  // 99.7% of input (0.3% fee deducted)
-numerator = amountInWithFee * reserveOut
-denominator = (reserveIn * 1000) + amountInWithFee
-amountOut = numerator / denominator
-
-
-### Constant Product Formula Verification
-
-Before Swap: k = reserveA * reserveB
-After Swap: k' = reserveA' * reserveB'
-
-The fee mechanism ensures: k' >= k (k increases due to fee accumulation)
-
-
-## Project Structure
-
-```
+Project Structure
+text
 dex-amm-protocol/
 ├── contracts/
-│   ├── DEX.sol                 # Main DEX implementation
-│   └── MockERC20.sol           # ERC-20 token for testing
+│   ├── DEX.sol              # Main DEX implementation
+│   └── MockERC20.sol        # ERC-20 token for testing
 ├── test/
-│   └── DEX.test.js             # 27 comprehensive test cases
+│   └── DEX.test.js          # 27 comprehensive test cases
 ├── scripts/
-│   └── deploy.js               # Deployment script
-├── Dockerfile                  # Docker container configuration
-├── docker-compose.yml          # Docker compose setup
-├── .dockerignore                # Files to exclude from Docker
-├── hardhat.config.js           # Hardhat configuration
-├── package.json                # Project dependencies
-└── README.md                   # This file
-```
+│   └── deploy.js            # Deployment script
+├── Dockerfile               # Docker container configuration
+├── docker-compose.yml       # Docker Compose setup
+├── .dockerignore            # Files to exclude from Docker builds
+├── hardhat.config.js        # Hardhat configuration
+├── package.json             # Project dependencies & scripts
+└── README.md                # Documentation (this file)
+Technologies Used
+Solidity 0.8.19 – Smart contract language
 
-## Technologies Used
+Hardhat – Ethereum development framework
 
-- **Solidity 0.8.19** - Smart contract language
-- **Hardhat** - Ethereum development framework
-- **Ethers.js** - Ethereum library for JavaScript
-- **Chai** - Testing framework assertions
-- **Node.js 18** - JavaScript runtime
-- **Docker** - Containerization
-- **OpenZeppelin** - Secure smart contract libraries
+Ethers.js – Ethereum JavaScript library
 
+Chai – Assertion library for testing
 
- **Smart Contracts Implemented**
-- DEX.sol with full AMM functionality
-- MockERC20.sol for testing
+Node.js 18+ – JavaScript runtime
 
- **Comprehensive Test Suite**
-- 27 test cases covering all functionality
-- Liquidity management tests
-- Swap mechanism tests
-- Fee distribution verification
-- Edge case handling
-- Event emission tests
+Docker – Containerization
 
- **Configuration & Setup**
-- Hardhat configuration with optimization
-- Package.json with all dependencies
-- Docker setup with Dockerfile and docker-compose.yml
-- .dockerignore for efficient builds
+OpenZeppelin – Secure smart contract libraries
 
- **Deployment**
-- Deployment script (scripts/deploy.js)
-- Automated contract deployment and logging
+Smart Contracts Implemented
+DEX.sol – Full AMM functionality (liquidity, swaps, pricing, fees)
 
- **Documentation**
-- Comprehensive README
-- NatSpec comments in contracts
-- Clear function descriptions
-- Setup and usage instructions
+MockERC20.sol – ERC-20 token for testing and local experimentation
+
+Comprehensive Test Suite
+27 test cases covering:
+
+Liquidity management
+
+Swap mechanics
+
+Fee accumulation and distribution
+
+Edge cases
+
+Event emissions
+
+Configuration & Setup
+Hardhat configuration with optimizer settings
+
+package.json scripts:
+
+compile, test, coverage, deploy
+
+Docker setup:
+
+Dockerfile, docker-compose.yml, .dockerignore
+
+Deployment
+scripts/deploy.js handles automated deployment and logs contract addresses.
+
+## Documentation
+This README for high-level overview and usage
+
+NatSpec-style comments in contracts
+
+Clear function naming and separation of concerns
 
 ## Security Considerations
+Input validation for non-zero amounts
 
-1. **Input Validation** - All functions validate inputs (non-zero amounts)
-2. **State Management** - Proper reserve tracking and updates
-3. **Overflow Protection** - Solidity 0.8+ automatic overflow checks
-4. **Event Tracking** - All state changes emit events for transparency
-5. **Fee Mechanism** - Secure 0.3% fee calculation
+Proper reserve tracking and updates
+
+Overflow protection via Solidity 0.8+ checked arithmetic
+
+Event emissions for all critical state changes
+
+Fee calculation using integer math to avoid precision errors
 
 ## Known Limitations
+No slippage protection (could add minAmountOut parameters)
 
-1. **No Slippage Protection** - Can add minAmountOut parameter for production
-2. **Single Pair** - Only supports one trading pair
-3. **No Flash Loans** - Can be added for advanced features
-4. **Basic Access Control** - No role-based permissions
+Single trading pair per DEX instance
+
+No flash loans or flash swaps
+
+Basic access control; no role-based permissions or governance
 
 ## Future Enhancements
+Slippage protection via minAmountOut
 
-- Slippage protection with minAmountOut parameters
-- Multiple trading pairs support
-- Flash swap functionality
-- Governance token implementation
-- Time-locked transactions
-- Advanced routing for token paths
+Support for multiple trading pairs
+
+Flash swap functionality
+
+Governance token and staking mechanisms
+
+Time-locked operations for governance
+
+Multi-hop routing for better price discovery
 
 ## Repository
-
-🔗 [GitHub Repository]https://github.com/N-Haritha16/dex_Amm_protocol
-
+🔗 GitHub: https://github.com/N-Haritha16/dex_Amm_protocol
